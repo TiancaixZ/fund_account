@@ -10,10 +10,6 @@ def read_list(date, address):
     :return:
     """
     summary_list = []
-    pri_inc_list = []
-    pri_exp_list = []
-    com_inc_list = []
-    com_exp_list = []
 
     wb = load_workbook(address)
     for sheet in wb:
@@ -32,19 +28,22 @@ def read_list(date, address):
         summary_data = Summary_data(sheet.title, total_lmb, total_income,
                                     total_expenditure, total_contacts)
         summary_list.append(summary_data)
+        print("成功读取" + sheet.title + "汇总" + "..............................OK")
 
-        if sheet.title != "理财":
-            if sheet.title == "民生对公" or sheet.title == "承兑汇票" or sheet.title == "半额承兑":
-                com_name_list = name_list(1, sheet)
-                com_inc_list = pri_com_exp(date, com_name_list, 2, sheet)
-                com_exp_list = pri_com_exp(date, com_name_list, 3, sheet)
-            else:
-                pri_name_list = name_list(0, sheet)
-                pri_inc_list = pri_com_exp(date, pri_name_list, 0, sheet)
-                pri_exp_list = pri_com_exp(date, pri_name_list, 1, sheet)
+        # if sheet.title != "理财":
+        #     if sheet.title == "民生对公" or sheet.title == "承兑汇票" or sheet.title == "半额承兑":
+        #         com_name_list = name_list(1, sheet)
+        #         com_inc_list = pri_com_exp(date, com_name_list, 2, wb)
+        #         com_exp_list = pri_com_exp(date, com_name_list, 3, wb)
+        #     else:
+        #         pri_name_list = name_list(0, sheet)
+        #         pri_inc_list = pri_com_exp(date, pri_name_list, 0, wb)
+        #         pri_exp_list = pri_com_exp(date, pri_name_list, 1, wb)
 
-        print("成功读取" + sheet.title + "..............................OK")
-
+    pri_inc_list = pri_com_exp(date, 0, wb)
+    pri_exp_list = pri_com_exp(date, 1, wb)
+    com_inc_list = pri_com_exp(date, 2, wb)
+    com_exp_list = pri_com_exp(date, 3, wb)
     return summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list
 
 
@@ -114,13 +113,13 @@ def contacts(date, row, sheet):
     return val
 
 
-def pri_com_exp(date, list, pri_com_inc_exp, sheet):
+def pri_com_exp(date, pri_com_inc_exp, wb):
     """
     负责人/公司 收入/支出
+    :param wb:
     :param date:
     :param list:
     :param pri_com_inc_exp:
-    :param sheet:
     :return:
     """
     data_list = []
@@ -130,27 +129,48 @@ def pri_com_exp(date, list, pri_com_inc_exp, sheet):
     if pri_com_inc_exp == 0:
         col = 10
         col_1 = 7  # 负责人 收入
+        print_str = "负责人 收入"
     elif pri_com_inc_exp == 1:
         col = 10
         col_1 = 8  # 负责人 支出
+        print_str = "负责人 支出"
     elif pri_com_inc_exp == 2:
         col = 6
         col_1 = 7  # 公司 收入
+        print_str = "公司 收入"
     elif pri_com_inc_exp == 3:
         col = 6
         col_1 = 8  # 公司 支出
+        print_str = "公司 支出"
 
-    val = 0
-    for name in list:
-        for row in range(4, sheet.max_row + 1):
-            if sheet.cell(row, col).value == name and \
-                    sheet.cell(row, col_1).value is not None and \
-                    sheet.cell(row, 3).value != "往来" and \
-                    sheet.cell(row, 1).value == int(date):
-                val = sheet.cell(row, col_1).value + val
-        data = Inc_Exp_data(sheet.title, name, val)
-        data_list.append(data)
-
+    for sheet in wb:
+        if sheet.title != "理财":
+            if sheet.title == "民生对公" or sheet.title == "承兑汇票" or sheet.title == "半额承兑":
+                com_name_list = name_list(1, sheet)
+                val = 0
+                for name in com_name_list:
+                    for row in range(4, sheet.max_row + 1):
+                        if sheet.cell(row, col).value == name and \
+                                sheet.cell(row, col_1).value is not None and \
+                                sheet.cell(row, 3).value != "往来" and \
+                                sheet.cell(row, 1).value == int(date):
+                            val = sheet.cell(row, col_1).value + val
+                    data = Inc_Exp_data(sheet.title, name, val)
+                    data_list.append(data)
+                print("成功读取" + sheet.title + print_str + "..............................OK")
+            else:
+                pri_name_list = name_list(0, sheet)
+                val = 0
+                for name in pri_name_list:
+                    for row in range(4, sheet.max_row + 1):
+                        if sheet.cell(row, col).value == name and \
+                                sheet.cell(row, col_1).value is not None and \
+                                sheet.cell(row, 3).value != "往来" and \
+                                sheet.cell(row, 1).value == int(date):
+                            val = sheet.cell(row, col_1).value + val
+                    data = Inc_Exp_data(sheet.title, name, val)
+                    data_list.append(data)
+                print("成功读取" + sheet.title + print_str + "..............................OK")
     return data_list
 
 

@@ -10,40 +10,17 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
     """创建sheet"""
     wb = Workbook()
     ws_summary = wb.create_sheet("汇总", 0)
-    # ws_income_principal = wb.create_sheet("收入_负责人", 1)
-    # ws_expenditure_principal = wb.create_sheet("支出_负责人", 2)
-    # ws_income_company = wb.create_sheet("收入_公司", 3)
-    # ws_expenditure_company = wb.create_sheet("收入_公司", 4)
+    ws_income_principal = wb.create_sheet("收入_负责人", 1)
+    ws_expenditure_principal = wb.create_sheet("支出_负责人", 2)
+    ws_income_company = wb.create_sheet("收入_公司", 3)
+    ws_expenditure_company = wb.create_sheet("支出_公司", 4)
 
     summary_sheet(ws_summary, month, summary_list)
 
-    # """收入_负责人表头"""
-    # ws_income_principal["A1"] = "202年" + month + "月份朗坤资金收入"
-    # ws_income_principal["A2"] = "负责人"
-    # muban(summary_list, ws_income_principal, )
-    # ws_income_principal.merge_cells(1, 1, 1, len(summary_list) + 1)
-    # print("收入_负责人 表头创建..............................OK")
-    #
-    # """支出_负责人表头"""
-    # ws_expenditure_principal["A1"] = "2020年" + month + "月份朗坤资金支出"
-    # ws_expenditure_principal["A2"] = "负责人"
-    # muban(summary_list, ws_expenditure_principal, )
-    # ws_expenditure_principal.merge_cells(1, 1, 1, len(summary_list) + 1)
-    # print("支出_负责人 表头创建..............................OK")
-    #
-    # """收入_公司表头"""
-    # ws_income_company["A1"] = "202年" + month + "月份朗坤资金收入"
-    # ws_income_company["A2"] = "单位名称"
-    # muban(summary_list, ws_income_company, )
-    # ws_income_company.merge_cells(1, 1, 1, len(summary_list) + 1)
-    # print("收入_公司 表头创建..............................OK")
-    #
-    # """支出_公司表头"""
-    # ws_expenditure_company["A1"] = "2020年" + month + "月份朗坤资金支出"
-    # ws_expenditure_company["A2"] = "单位名称"
-    # muban(summary_list, ws_expenditure_company, )
-    # ws_expenditure_company.merge_cells(1, 1, 1, len(summary_list) + 1)
-    # print("支出_公司 表头创建..............................OK")
+    incom_exp_sheet(ws_income_principal, month, pri_inc_list, 0)
+    incom_exp_sheet(ws_expenditure_principal, month, pri_exp_list, 1)
+    incom_exp_sheet(ws_income_company, month, com_inc_list, 2)
+    incom_exp_sheet(ws_expenditure_company, month, com_exp_lis, 3)
 
     """文件保存"""
     path = path + "test.xlsx"
@@ -51,15 +28,15 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
     print("文件保存成功..............................OK")
 
 
-def muban_list(list):
+def muban_list(repat_list):
     """
-    表头名 （卡名）    去重
-    :param list:
+    表头名 （卡名）  去重
+    :param repat_list:
     :return:
     """
     name_old_list = []
     pricom_old_list = []
-    for item in list:
+    for item in repat_list:
         name_old_list.append(item.name)
         pricom_old_list.append(item.pri_com)
     name_new_list = list(set(name_old_list))
@@ -75,14 +52,22 @@ def muban(name_list, pricom_list, ws):
     :param ws:
     :return:
     """
-    for column in range(2, len(name_list) + 1):
-        _ = ws.cell(column=column, row=2, value=name_list[column - 1])
-    ws.merge_cells(1, 1, 1, len(name_list) + 1)  # 合并单元表头
-    for row in range(3, len(pricom_list) + 4):
-        if row == len(pricom_list) + 4:
+    ws["A1"].border = sheet_border()
+    ws["A1"].alignment = sheet_alignment()
+    for column in range(2, len(name_list)+1):
+        _ = ws.cell(column=column, row=2, value=name_list[column-1])    # 卡名
+    for row in range(3, len(pricom_list)+4):
+        if row == len(pricom_list)+3:
             _ = ws.cell(column=1, row=row, value="合计")
         else:
-            _ = ws.cell(column=1, row=row, value=pricom_list[row - 2])  # 单位名称/负责人
+            _ = ws.cell(column=1, row=row, value=pricom_list[row-3])  # 单位名称/负责人
+
+    for col in range(1, len(name_list)+1):
+        for row in range(2, len(pricom_list)+4):
+            ws.cell(row, col).border = sheet_border()
+            ws.cell(row, col).alignment = sheet_alignment()
+    ws.column_dimensions['A'].width = 40  # 设置列宽40
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(name_list))  # 合并单元表头
     print("模板创建..............................OK")
 
 
@@ -143,16 +128,38 @@ def summary_sheet(ws, month, list):
     print("汇总 数据填写..............................OK")
 
 
-def incom_sheet(ws, month, list, pri_com):
-    if pri_com == 0:
+def incom_exp_sheet(ws, month, ready_list, pri_com_inc_exp):
+    """
+    公司/负责人 收入/支出 表
+    :param ws:
+    :param month:
+    :param ready_list:
+    :param pri_com_inc_exp:
+    :return:
+    """
+    if pri_com_inc_exp == 0:
         var = "负责人"
-    else:
+        var_title = "收入"
+    elif pri_com_inc_exp == 1:
+        var = "负责人"
+        var_title = "支出"
+    elif pri_com_inc_exp == 2:
         var = "单位名称"
+        var_title = "收入"
+    elif pri_com_inc_exp == 3:
+        var = "单位名称"
+        var_title = "支出 "
 
-    ws["A1"] = "202年" + month + "月份朗坤资金收入"
+    ws["A1"] = "202年" + month + "月份朗坤资金收入" + var_title
     ws["A2"] = var
-    name_list, pricom_list = muban_list(list)
+    name_list, pricom_list = muban_list(ready_list)
     muban(name_list, pricom_list, ws)
+
+    for item in ready_list:
+        for row in range(3, len(pricom_list) + 4):
+            for column in range(2, len(name_list) + 1):
+                if item.name == name_list[column-1] and item.pri_com == pricom_list[row-4]:
+                    _ = ws.cell(column=column, row=row, value=item.inc_exp)
 
 
 def sheet_border():
