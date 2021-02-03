@@ -17,6 +17,9 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
 
     summary_sheet(ws_summary, month, summary_list)
 
+    for item in pri_inc_list:
+        print(item.pri_com + str(len(pri_inc_list)))
+
     incom_exp_sheet(ws_income_principal, month, pri_inc_list, 0)
     incom_exp_sheet(ws_expenditure_principal, month, pri_exp_list, 1)
     incom_exp_sheet(ws_income_company, month, com_inc_list, 2)
@@ -150,7 +153,7 @@ def incom_exp_sheet(ws, month, ready_list, pri_com_inc_exp):
         var = "单位名称"
         var_title = "支出 "
 
-    ws["A1"] = "202年" + month + "月份朗坤资金收入" + var_title
+    ws["A1"] = "202年" + month + "月份朗坤资金" + var_title
     ws["A2"] = var
     name_list, pricom_list = muban_list(ready_list)
     muban(name_list, pricom_list, ws)
