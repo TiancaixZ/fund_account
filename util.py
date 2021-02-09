@@ -9,3 +9,4 @@ def if_null(value):
     if value is not None:
         var = value
     return var
+

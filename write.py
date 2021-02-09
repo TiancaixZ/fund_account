@@ -17,8 +17,8 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
 
     summary_sheet(ws_summary, month, summary_list)
 
-    for item in pri_inc_list:
-        print(item.pri_com + str(len(pri_inc_list)))
+    # for item in com_inc_list:
+    #     print(item.name + item.pri_com + str(item.inc_exp))
 
     incom_exp_sheet(ws_income_principal, month, pri_inc_list, 0)
     incom_exp_sheet(ws_expenditure_principal, month, pri_exp_list, 1)
@@ -161,7 +161,9 @@ def incom_exp_sheet(ws, month, ready_list, pri_com_inc_exp):
     for item in ready_list:
         for row in range(3, len(pricom_list) + 4):
             for column in range(2, len(name_list) + 1):
-                if item.name == name_list[column-1] and item.pri_com == pricom_list[row-4]:
+                if row == len(pricom_list)+3:
+                    pass
+                elif item.name == name_list[column-1] and item.pri_com == pricom_list[row-3]:
                     _ = ws.cell(column=column, row=row, value=item.inc_exp)
 
 

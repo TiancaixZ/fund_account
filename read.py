@@ -2,6 +2,24 @@ from openpyxl import load_workbook
 from data import Summary_data, Inc_Exp_data
 
 
+def read_worksheet(password, address):
+    """
+    解密excel
+    :param password:
+    :param address:
+    :return:
+    """
+    xlapp = win32com.client.Dispath("excel.Application")
+    wb = xlapp.Workbooks.open(address, False, True, None, password)
+
+    if wb is not None:
+        print("test")
+    else:
+        print("no")
+
+    return wb
+
+
 def read_list(date, address):
     """
     获取所有列表
@@ -148,6 +166,7 @@ def pri_com_exp(date, pri_com_inc_exp, wb):
                                 val = sheet.cell(row, col_1).value + val
                         data = Inc_Exp_data(sheet.title, name, val)
                         data_list.append(data)
+                        val = 0
                     print("成功读取" + sheet.title + print_str + "..............................OK")
             else:
                 pri_name_list = name_list(0, sheet)
@@ -161,6 +180,7 @@ def pri_com_exp(date, pri_com_inc_exp, wb):
                             val = sheet.cell(row, col_1).value + val
                     data = Inc_Exp_data(sheet.title, name, val)
                     data_list.append(data)
+                    val = 0
                 print("成功读取" + sheet.title + print_str + "..............................OK")
     return data_list
 
