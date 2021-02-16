@@ -3,9 +3,8 @@ import tkinter.filedialog
 import tkinter.messagebox
 import tkinter.scrolledtext
 
-from read import read_list
+from read import Read
 from util import show_Log
-from write import sheet
 
 
 def read_wroksheet():
@@ -78,25 +77,20 @@ class Fund(tk.Tk):
 
     def run(self):
 
-        show = show_Log(self.scr)
-
         if self.passwordEntry.get() == '':
             tkinter.messagebox.showerror('错误', '密码没有输入')
-
-        if self.month_entry.get() == '':
+        elif self.month_entry.get() == '':
             tkinter.messagebox.showerror('错误', '月份没有输入')
+        elif self.month_entry.get() != '' and self.passwordEntry.get() != '':
+            show = show_Log(self.scr)
+            read = Read(self.passwordEntry.get(), self.pathEntry.get(), self.month_entry.get(), show)
+            test_list = read.pri_inc_list
+            for item in test_list:
+                print("test" + item.name)
+            # summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list = \
+            #     read_list(self.month_entry.get(), self.pathEntry.get(), show)
+            # sheet(self.month_entry.get(), summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list,
+            #       self.save_pathEntry.get() + "/")
 
 
-        summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list = \
-            read_list(self.month_entry.get(), self.pathEntry.get(), show)
-        sheet(self.month_entry.get(), summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list,
-              self.save_pathEntry.get()+"/")
 
-    def showLog(self, log_str):
-        """
-        显示log
-        :param log_str:
-        :return:
-        """
-        self.scr.insert('end', log_str+'\n')
-        self.scr.see('end')
