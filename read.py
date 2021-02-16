@@ -20,9 +20,10 @@ def read_worksheet(password, address):
     return wb
 
 
-def read_list(date, address):
+def read_list(date, address, show):
     """
     获取所有列表
+    :param show:
     :param date:
     :param address:
     :return:
@@ -46,6 +47,7 @@ def read_list(date, address):
         summary_data = Summary_data(sheet.title, total_lmb, total_income,
                                     total_expenditure, total_contacts)
         summary_list.append(summary_data)
+        show.show("成功读取" + sheet.title + "汇总" + "..............................OK")
         print("成功读取" + sheet.title + "汇总" + "..............................OK")
 
     pri_inc_list = pri_com_exp(date, 0, wb)
@@ -124,12 +126,12 @@ def contacts(date, row, sheet):
 def pri_com_exp(date, pri_com_inc_exp, wb):
     """
     负责人/公司 收入/支出
-    :param wb:
     :param date:
-    :param list:
     :param pri_com_inc_exp:
+    :param wb:
     :return:
     """
+
     data_list = []
 
     col = 0
@@ -153,7 +155,7 @@ def pri_com_exp(date, pri_com_inc_exp, wb):
 
     for sheet in wb:
         if sheet.title != "理财":
-            if pri_com_inc_exp == 2 or pri_com_inc_exp ==3:
+            if pri_com_inc_exp == 2 or pri_com_inc_exp == 3:
                 if sheet.title == "民生对公" or sheet.title == "承兑汇票" or sheet.title == "半额承兑":
                     com_name_list = name_list(1, sheet)
                     val = 0

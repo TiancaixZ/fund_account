@@ -17,9 +17,6 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
 
     summary_sheet(ws_summary, month, summary_list)
 
-    # for item in com_inc_list:
-    #     print(item.name + item.pri_com + str(item.inc_exp))
-
     incom_exp_sheet(ws_income_principal, month, pri_inc_list, 0)
     incom_exp_sheet(ws_expenditure_principal, month, pri_exp_list, 1)
     incom_exp_sheet(ws_income_company, month, com_inc_list, 2)
@@ -28,6 +25,7 @@ def sheet(date, summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_
     """文件保存"""
     path = path + "test.xlsx"
     wb.save(path)
+
     print("文件保存成功..............................OK")
 
 

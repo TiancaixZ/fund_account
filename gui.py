@@ -4,6 +4,7 @@ import tkinter.messagebox
 import tkinter.scrolledtext
 
 from read import read_list
+from util import show_Log
 from write import sheet
 
 
@@ -56,9 +57,8 @@ class Fund(tk.Tk):
 
         Information = tk.LabelFrame(self, text="操作信息", padx=10, pady=10)
         Information.place(x=10, y=200)
-        scr = tk.scrolledtext.ScrolledText(Information, width=50, heigh=2, font=('Arial', 14),
-                                           textvariable=self.scr_text)
-        scr.grid()
+        self.scr = tk.scrolledtext.ScrolledText(Information, width=50, heigh=2, font=('Arial', 14), wrap=tk.WORD)
+        self.scr.grid()
 
     def selectPath(self):
         """
@@ -78,20 +78,25 @@ class Fund(tk.Tk):
 
     def run(self):
 
+        show = show_Log(self.scr)
+
         if self.passwordEntry.get() == '':
             tkinter.messagebox.showerror('错误', '密码没有输入')
 
         if self.month_entry.get() == '':
             tkinter.messagebox.showerror('错误', '月份没有输入')
 
-        # print(self.passwordEntry.get())
-        # print(self.month_entry.get())
-
-        # read_wroksheet(self.pathEntry.get(), self.passwordEntry.get())
-        # month = self.month_entry.get()
 
         summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list = \
-            read_list(self.month_entry.get(), self.pathEntry.get())
+            read_list(self.month_entry.get(), self.pathEntry.get(), show)
         sheet(self.month_entry.get(), summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list,
               self.save_pathEntry.get()+"/")
 
+    def showLog(self, log_str):
+        """
+        显示log
+        :param log_str:
+        :return:
+        """
+        self.scr.insert('end', log_str+'\n')
+        self.scr.see('end')
