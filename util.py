@@ -31,6 +31,22 @@ def name_list(pri_inc_row, sheet):
     return new_list
 
 
+def muban_list(repat_list):
+    """
+    表头名 （卡名）  去重
+    :param repat_list:
+    :return:
+    """
+    name_old_list = []
+    pricom_old_list = []
+    for item in repat_list:
+        name_old_list.append(item.name)
+        pricom_old_list.append(item.pri_com)
+    name_new_list = list(set(name_old_list))
+    pricom_new_list = list(set(pricom_old_list))
+    return name_new_list, pricom_new_list
+
+
 class show_Log:
     """
     实现log输出

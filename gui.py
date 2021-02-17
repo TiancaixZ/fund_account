@@ -5,10 +5,7 @@ import tkinter.scrolledtext
 
 from read import Read
 from util import show_Log
-
-
-def read_wroksheet():
-    pass
+from write import Write
 
 
 class Fund(tk.Tk):
@@ -84,13 +81,16 @@ class Fund(tk.Tk):
         elif self.month_entry.get() != '' and self.passwordEntry.get() != '':
             show = show_Log(self.scr)
             read = Read(self.passwordEntry.get(), self.pathEntry.get(), self.month_entry.get(), show)
-            test_list = read.pri_inc_list
-            for item in test_list:
-                print("test" + item.name)
-            # summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list = \
-            #     read_list(self.month_entry.get(), self.pathEntry.get(), show)
-            # sheet(self.month_entry.get(), summary_list, pri_inc_list, pri_exp_list, com_inc_list, com_exp_list,
-            #       self.save_pathEntry.get() + "/")
+            write = Write(self.month_entry.get(), self.save_pathEntry.get(), show)
+            write.summary_sheet(read.summary_list)
+            write.ws_income_principal_sheet(read.pri_inc_list)
+            write.ws_expenditure_principal_sheet(read.pri_exp_list)
+            write.ws_income_company_sheet(read.com_inc_list)
+            write.ws_expenditure_company_sheet(read.com_exp_list)
+            write.save()
+            # test_list = read.com_exp_list
+            # for item in test_list:
+            #     print("test" + item.name + str(item.pri_com) + str(item.inc_exp))
 
 
 
