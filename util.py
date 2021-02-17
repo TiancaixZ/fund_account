@@ -40,8 +40,9 @@ def muban_list(repat_list):
     name_old_list = []
     pricom_old_list = []
     for item in repat_list:
+        if item.pri_com != "往来":
+            pricom_old_list.append(item.pri_com)
         name_old_list.append(item.name)
-        pricom_old_list.append(item.pri_com)
     name_new_list = list(set(name_old_list))
     pricom_new_list = list(set(pricom_old_list))
     return name_new_list, pricom_new_list

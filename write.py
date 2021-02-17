@@ -95,11 +95,11 @@ class Write:
                 _ = ws.cell(column=1, row=row, value=pricom_list[row-3])  # 单位名称/负责人
 
         for col in range(1, len(name_list) + 2):
-            for row in range(2, len(pricom_list) + 5):
+            for row in range(2, len(pricom_list) + 4):
                 ws.cell(row, col).border = sheet_border()
                 ws.cell(row, col).alignment = sheet_alignment()
         ws.column_dimensions['A'].width = 40  # 设置列宽40
-        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(name_list))  # 合并单元表头
+        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(name_list)+1)  # 合并单元表头
         self._show.show("模板创建..............................OK")
         print("模板创建..............................OK")
 
@@ -123,14 +123,14 @@ class Write:
             var_title = "收入"
         elif pri_com_inc_exp == 3:
             var = "单位名称"
-            var_title = "支出 "
+            var_title = "支出"
 
         ws["A1"] = "202年" + month + "月份朗坤资金" + var_title
         ws["A2"] = var
         name_list, pricom_list = muban_list(ready_list)
-        print(len(name_list))
         self.muban(name_list, pricom_list, ws)
 
+        # 数据填写
         for item in ready_list:
             for row in range(3, len(pricom_list) + 4):
                 for column in range(2, len(name_list) + 3):
@@ -139,7 +139,10 @@ class Write:
                     elif column == len(name_list) + 2:
                         pass
                     elif item.name == name_list[column-2] and item.pri_com == pricom_list[row-3]:
+
                         _ = ws.cell(column=column, row=row, value=item.inc_exp)
+        self._show.show(var+"数据"+var_title+"填写..............................OK")
+        print(var+"数据"+var_title+"填写..............................OK")
     
     def ws_income_principal_sheet(self, pri_inc_list):
         self.incom_exp_sheet(self.ws_income_principal, str(self._date)[2:4], pri_inc_list, 0)
